@@ -1,15 +1,6 @@
 export interface IFinancialData<T> {
   data: Array<T>
 }
-
-export interface IReportNorm {
-  reportNormId: number
-  reportNormName: string
-  unit: string
-  financeIndexGroupId: number
-  financeIndexGroupName: string
-}
-
 export interface IReportNormValue {
   financeIndexID: number
   value1: number
@@ -23,10 +14,12 @@ export interface IReportNormValue {
   value9: number
 }
 
+export type TCapitalize<T extends Record<string, any>> = {
+  [K in keyof T as Capitalize<string & K>]: T[K]
+}
 
-
-export type TCapitalize<T> =
-  T extends string ? `${Capitalize<T>}` :
-  T extends `${infer F}_${infer R}` ? `${Capitalize<F>}_${TCapitalize<R>}` :
-  never;
-
+export interface IIndicator {
+  id: number
+  name: string
+  unit: string
+}

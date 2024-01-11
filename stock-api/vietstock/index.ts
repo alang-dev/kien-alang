@@ -2,7 +2,7 @@ import { BASE_URL, HEADERS, MAX_PERIOD_PER_REQ } from "@/stock-api/vietstock/con
 import { buildBodyForGetFinanceIndexDataValue } from "@/stock-api/vietstock/helpers"
 import { IFinancialData, IReportNormValue, TCapitalize } from "@/stock-api/vietstock/types"
 
-export async function getFinanceIndexDataValue(ticker: string, numberOfQuarters: number = 20) {
+export async function getFinanceIndexDataValue(ticker: string, numberOfQuarters: number = 20): Promise<IFinancialData<TCapitalize<IReportNormValue>>> {
   const times = Math.ceil(numberOfQuarters / MAX_PERIOD_PER_REQ)
   const reportNormValue: IFinancialData<TCapitalize<IReportNormValue>> = {
     data: [],
