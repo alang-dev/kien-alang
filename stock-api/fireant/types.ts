@@ -29,6 +29,14 @@ export interface ITickerProfile {
   isListed: boolean
 }
 
+export interface ITickerSearch {
+  id: string
+  type: string
+  key: string
+  name: string
+  description: string
+}
+
 export enum ICBCode {
   BANK = "8355",
   SECURITY = "8781",

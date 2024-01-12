@@ -1,3 +1,5 @@
+"use server"
+
 import { getFinanceIndexDataValue } from "@/stock-api/vietstock"
 import { INDICATORS, MAX_PERIOD_PER_REQ } from "@/stock-api/vietstock/constants"
 import { IEpsBvpsIndicator } from "@/app/stock-pick/types"
@@ -9,21 +11,11 @@ import { getProfile } from "@/stock-api/fireant"
 import { ICBCode } from "@/stock-api/fireant/types"
 
 
-export async function getEpsBvpsHistory(tickerParam: unknown, quarterCount: number = 20): Promise<Array<IEpsBvpsIndicator>> {
-  const tickers: Array<string> = []
-  if (typeof tickerParam === "string") {
-    tickers.push(tickerParam)
-  } else if (Array.isArray(tickerParam)) {
-    const uniqueTickers = new Set<unknown>(tickerParam)
-    uniqueTickers.forEach((t) => {
-      if (typeof t === "string") {
-        tickers.push(t)
-      }
-    })
-  }
+export async function getEpsBvpsHistory(tickers: string[], quarterCount: number = 20): Promise<Array<IEpsBvpsIndicator>> {
+  const uniqueTickers = new Set<string>(tickers)
 
   const indicatorData: Array<IEpsBvpsIndicator> = []
-  for (const ticker of tickers) {
+  for (const ticker of Array.from(uniqueTickers)) {
     const data = await getPeEpsIndicator(ticker.toUpperCase(), quarterCount)
     if (data) {
       indicatorData.push(data)

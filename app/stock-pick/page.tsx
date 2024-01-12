@@ -1,15 +1,6 @@
-import IndicatorChart from "@/app/stock-pick/IndicatorChart"
-import { getEpsBvpsHistory } from "@/app/stock-pick/services"
-import { IEpsBvpsIndicator } from "@/app/stock-pick/types"
-import { Fragment } from "react"
-
-const _QuarterCount: Readonly<number> = 5 * 4
+import { Indicators } from "@/app/stock-pick/Indicators"
 
 export default async function StockPick(props: IServerPropsDefault) {
-  const { searchParams = {} } = props
-  const { ticker } = searchParams
-  const indicatorData: Array<IEpsBvpsIndicator> = await getEpsBvpsHistory(ticker, _QuarterCount)
-
   return (
     <div>
       <div>
@@ -32,26 +23,7 @@ export default async function StockPick(props: IServerPropsDefault) {
         <blockquote className="italic">- by Investopedia</blockquote>
       </div>
 
-      <div className="mt-4">
-        {indicatorData.length > 0 && (
-          <h2 className="font-semibold">
-            PE/PB of last {_QuarterCount} quarters
-          </h2>
-        )}
-        {indicatorData.map((data) => {
-          return (
-            <Fragment key={data.ticker}>
-              {data.ticker === "PNJ" && (
-                <p className="italic">
-                  Note: PNJ has an error data point in 2020-Q2, therefore we
-                  remove it to reduce chart error.
-                </p>
-              )}
-              <IndicatorChart data={data} />
-            </Fragment>
-          )
-        })}
-      </div>
+      <Indicators />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 "use client"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
+import Link from "next/link"
 
 export function TopNav() {
   const pathname = usePathname()
@@ -18,7 +19,7 @@ export function TopNav() {
             "bg-gray-100 font-medium": pathname === "/stock-pick",
           })}
         >
-          <a href="/stock-pick">Stock Picks</a>
+          <Link href="./stock-pick">Stock Picks</Link>
         </div>
       </div>
     </div>

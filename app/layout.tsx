@@ -16,7 +16,7 @@ export default function RootLayout(props: PropsWithChildren) {
     <html lang="en">
       <body className={inter.className}>
         <div className="h-screen flex flex-col">
-          <div className="sticky top-0 p-6">
+          <div className="sticky top-0 p-6 pb-0 bg-white z-50">
             <TopNav />
           </div>
 
