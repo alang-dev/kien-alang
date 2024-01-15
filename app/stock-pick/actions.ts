@@ -7,11 +7,25 @@ import dayjs from "dayjs"
 import { IReportNormValue, TCapitalize } from "@/stock-api/vietstock/types"
 import { getByPointIndex } from "@/stock-api/vietstock/helpers"
 import { HistogramData, Time } from "lightweight-charts"
-import { getProfile } from "@/stock-api/fireant"
-import { ICBCode } from "@/stock-api/fireant/types"
+import { getHistoricalQuotes, getProfile } from "@/stock-api/fireant"
+import { isFinancial } from "@/stock-api/fireant/utils"
+import { IHistoryQuote } from "@/stock-api/fireant/types"
 
+export async function getLatestPrice(
+  ticker: string,
+): Promise<IHistoryQuote | undefined> {
+  const startDate = dayjs().subtract(2, "week").toISOString()
+  const endDate = dayjs().toISOString()
 
-export async function getEpsBvpsHistory(tickers: string[], quarterCount: number = 20): Promise<Array<IEpsBvpsIndicator>> {
+  const data = await getHistoricalQuotes(ticker, startDate, endDate)
+
+  return data[0]
+}
+
+export async function getEpsBvpsHistory(
+  tickers: string[],
+  quarterCount: number = 20,
+): Promise<Array<IEpsBvpsIndicator>> {
   const uniqueTickers = new Set<string>(tickers)
 
   const indicatorData: Array<IEpsBvpsIndicator> = []
@@ -34,9 +48,7 @@ export async function getPeEpsIndicator(
     ticker,
     numberOfQuarters,
   )
-  const isICBFinancial =
-    ICBCode.BANK === tickerProfile.icbCode ||
-    ICBCode.SECURITY === tickerProfile.icbCode
+  const isICBFinancial = isFinancial(tickerProfile.icbCode)
   const perShareId = isICBFinancial ? INDICATORS.BVPS.id : INDICATORS.EPS.id
   const perShareRatioId = isICBFinancial ? INDICATORS.PB.id : INDICATORS.PE.id
   const epsBvpsPoints = reportNormValue.data.filter(
@@ -59,9 +71,12 @@ export async function getPeEpsIndicator(
 
   const indicator: IEpsBvpsIndicator = {
     ticker,
+    icbCode: tickerProfile.icbCode,
     currency: "VND",
     perShareValues: [],
     perShareRatios: [],
+    closedPriceValues: [],
+    closedPriceLatest: 0,
   }
 
   let year = dayjs()
@@ -79,16 +94,16 @@ export async function getPeEpsIndicator(
     indicator.perShareRatios.push(...perShareNewRatios)
   }
 
-  if (ticker === "PNJ") {
-    // If ticker is PNJ then remove the 2020 30 June data point
-    const errorPoint = dayjs("2020-06-30")
-    indicator.perShareValues = indicator.perShareValues.filter(
-      (point) => !dayjs.unix(point.time as number).isSame(errorPoint, "day"),
-    )
-    indicator.perShareRatios = indicator.perShareRatios.filter(
-      (point) => !dayjs.unix(point.time as number).isSame(errorPoint, "day"),
-    )
-  }
+  const startQuarter = dayjs().subtract(2, "week").format("YYYY-MM-DD")
+  const today = dayjs().format("YYYY-MM-DD")
+
+  const historicalQuotes = await getHistoricalQuotes(
+    ticker,
+    startQuarter,
+    today,
+  )
+  const latestQuote = historicalQuotes[0]
+  indicator.closedPriceLatest = 1000 * latestQuote.priceClose / latestQuote.adjRatio
 
   return indicator
 }
@@ -107,7 +122,7 @@ function fromGroup(
       continue
     }
 
-    const time = startQuarter.add(i, "quarter").endOf('quarter').unix() as Time
+    const time = startQuarter.add(i, "quarter").endOf("quarter").unix() as Time
     const perShareNewValue: HistogramData = {
       time,
       value: eps,

@@ -29,6 +29,36 @@ export interface ITickerProfile {
   isListed: boolean
 }
 
+export interface IHistoryQuote {
+  // ISO date time
+  date: string
+  symbol: string
+  priceHigh: number
+  priceLow: number
+  priceOpen: number
+  priceAverage: number
+  priceClose: number
+  priceBasic: number
+  totalVolume: number
+  dealVolume: number
+  putthroughVolume: number
+  totalValue: number
+  putthroughValue: number
+  buyForeignQuantity: number
+  buyForeignValue: number
+  sellForeignQuantity: number
+  sellForeignValue: number
+  buyCount: number
+  buyQuantity: number
+  sellCount: number
+  sellQuantity: number
+  adjRatio: number
+  currentForeignRoom: number
+  propTradingNetDealValue?: number
+  propTradingNetPTValue?: number
+  propTradingNetValue?: number
+}
+
 export interface ITickerSearch {
   id: string
   type: string

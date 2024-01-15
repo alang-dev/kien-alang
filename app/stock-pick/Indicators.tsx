@@ -1,10 +1,11 @@
 "use client"
 
 import { TickerAutosuggestion } from "@/app/stock-pick/TickerAutosuggestion"
-import { Fragment, useState } from "react"
-import IndicatorChart from "@/app/stock-pick/IndicatorChart"
+import { useState } from "react"
+import IndicatorChart from "@/app/stock-pick/_components/IndicatorChart"
 import { IEpsBvpsIndicator } from "@/app/stock-pick/types"
 import { getEpsBvpsHistory } from "@/app/stock-pick/actions"
+import IndicatorCommendation from "@/app/stock-pick/_components/IndicatorCommendation"
 
 const _QuarterCount: Readonly<number> = 5 * 4
 
@@ -20,7 +21,9 @@ export function Indicators() {
   }
 
   function handleRemoveTicker(ticker: string) {
-    setIndicatorData((prevState) => prevState.filter((data) => data.ticker !== ticker))
+    setIndicatorData((prevState) =>
+      prevState.filter((data) => data.ticker !== ticker),
+    )
   }
 
   return (
@@ -31,22 +34,12 @@ export function Indicators() {
           handleRemoveTicker={handleRemoveTicker}
         />
       </div>
-      {indicatorData.length > 0 && (
-        <h2 className="font-semibold">
-          PE/PB of last {_QuarterCount} quarters
-        </h2>
-      )}
       {indicatorData.map((data) => {
         return (
-          <Fragment key={data.ticker}>
-            {data.ticker === "PNJ" && (
-              <p className="italic">
-                Note: PNJ has an error data point in 2020-Q2, therefore we
-                remove it to reduce chart error.
-              </p>
-            )}
+          <div key={data.ticker} className='mt-4 grid grid-cols-[1fr_3fr]'>
+            <IndicatorCommendation data={data} />
             <IndicatorChart data={data} />
-          </Fragment>
+          </div>
         )
       })}
     </div>

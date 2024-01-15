@@ -18,6 +18,7 @@
     "dayjs": "^1.11.10",
     "lightweight-charts": "^4.1.1",
     "lucide-react": "^0.309.0",
+    "mathjs": "^12.3.0",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",

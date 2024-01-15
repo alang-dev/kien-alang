@@ -3,11 +3,13 @@
 import {
   createChart,
   DeepPartial,
-  IChartApi, LineType,
-  TimeChartOptions
+  IChartApi,
+  LineType,
+  TimeChartOptions,
 } from "lightweight-charts"
 import { useEffect, useRef } from "react"
 import { IEpsBvpsIndicator } from "@/app/stock-pick/types"
+import { toVND } from "@/lib/money"
 
 interface IIndicatorChartProps {
   data: IEpsBvpsIndicator
@@ -18,18 +20,10 @@ const chartOptions: DeepPartial<TimeChartOptions> = {
   rightPriceScale: { visible: true },
 }
 
-const intl = new Intl.NumberFormat("vi-VN", {
-  style: "currency",
-  currency: "VND",
-})
-function toVND(price: number) {
-  return intl.format(price)
-}
-
 function IndicatorChart(props: IIndicatorChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
-  const { perShareValues, perShareRatios } = props.data
+  const { perShareValues, perShareRatios, closedPriceValues } = props.data
 
   useEffect(() => {
     if (!chartContainerRef.current) {
